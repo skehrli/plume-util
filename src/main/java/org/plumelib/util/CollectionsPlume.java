@@ -434,9 +434,9 @@ public final class CollectionsPlume {
    * @return a list of the results of applying {@code f} to the elements of {@code iterable}
    */
   public static <
-          @KeyForBottom FROM extends @Nullable @UnknownKeyFor Object,
+          @KeyForBottom FROM extends @Nullable @UnknownKeyFor @MustCallUnknown Object,
           @KeyForBottom TO extends @Nullable @UnknownKeyFor Object>
-      List<TO> mapList(Function<? super FROM, ? extends TO> f, @NotOwningCollection Iterable<FROM extends @MustCallUnknown Object> iterable) {
+      List<TO> mapList(Function<? super FROM, ? extends TO> f, Iterable<FROM extends @MustCallUnknown Object> iterable) {
     List<TO> result;
 
     if (iterable instanceof RandomAccess) {
@@ -480,7 +480,7 @@ public final class CollectionsPlume {
    * @return a list of the results of applying {@code f} to the elements of {@code a}
    */
   public static <
-          @KeyForBottom FROM extends @Nullable @UnknownKeyFor Object,
+          @KeyForBottom FROM extends @Nullable @UnknownKeyFor @MustCallUnknown Object,
           @KeyForBottom TO extends @Nullable @UnknownKeyFor Object>
       List<TO> mapList(
           @MustCallUnknown Function<@MustCallUnknown ? super FROM, ? extends TO> f, FROM[] a) {
