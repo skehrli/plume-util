@@ -435,7 +435,7 @@ public final class CollectionsPlume {
   public static <
           @KeyForBottom FROM extends @Nullable @UnknownKeyFor Object,
           @KeyForBottom TO extends @Nullable @UnknownKeyFor Object>
-      List<TO> mapList(Function<? super FROM, ? extends TO> f, Iterable<FROM> iterable) {
+      List<TO> mapList(Function<? super FROM, ? extends TO> f, Iterable<FROM extends @MustCallUnknown> iterable) {
     List<TO> result;
 
     if (iterable instanceof RandomAccess) {
