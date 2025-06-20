@@ -499,7 +499,7 @@ public final class CollectionsPlume {
    * @return a list of the results of applying {@code f} to the elements of {@code a}
    */
   public static <
-          @KeyForBottom FROM extends @Nullable @UnknownKeyFor @MustCallUnknown Object,
+          @KeyForBottom FROM extends @Nullable @UnknownKeyFor Object,
           @KeyForBottom TO extends @Nullable @UnknownKeyFor Object>
       List<TO> mapList(
           @MustCallUnknown Function<@MustCallUnknown ? super FROM, ? extends TO> f, FROM[] a) {
