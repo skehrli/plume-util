@@ -12,12 +12,17 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
+import org.checkerframework.checker.collectionownership.qual.OwningCollection;
+import org.checkerframework.checker.collectionownership.qual.PolyOwningCollection;
 import org.checkerframework.checker.index.qual.GTENegativeOne;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.checkerframework.checker.index.qual.LessThan;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
@@ -217,7 +222,7 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
    * @return true if the method modified this set
    */
   @SuppressWarnings({"InvalidParam"}) // Error Prone stupidly warns about field `values`
-  private boolean add(@GTENegativeOne int index, E value) {
+  private boolean add(@OwningCollection ArraySet<E> this, @GTENegativeOne int index, E value) {
     if (index != -1) {
       return false;
     }
@@ -234,7 +239,7 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
 
   /** Increases the capacity of the array. */
   @SuppressWarnings({"unchecked"}) // generic array cast
-  private void grow() {
+  private void grow(@OwningCollection ArraySet<E> this) {
     if (values == null) {
       this.values = (E[]) new Object[4];
     } else {
@@ -263,7 +268,7 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
 
   @Pure
   @Override
-  public @NonNegative int size() {
+  public @NonNegative int size(@NotOwningCollection ArraySet<E> this) {
     return size;
   }
 
@@ -281,7 +286,9 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
    * @return the index of the given value, or -1 if it does not appear
    */
   @Pure
-  private int indexOf(@GuardSatisfied @Nullable @UnknownSignedness Object value) {
+  private int indexOf(
+      @OwningCollection ArraySet<E> this,
+      @GuardSatisfied @Nullable @UnknownSignedness Object value) {
     if (values == null) {
       return -1;
     }
@@ -302,7 +309,7 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
   // Modification Operations
 
   @Override
-  public boolean add(E value) {
+  public boolean add(@OwningCollection ArraySet<E> this, @Owning E value) {
     int index = indexOf(value);
     return add(index, value);
   }
@@ -346,7 +353,7 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
   // iterators
 
   @Override
-  public Iterator<E> iterator() {
+  public Iterator<E> iterator(@PolyOwningCollection ArraySet<E> this) {
     return new ArraySetIterator();
   }
 
@@ -376,12 +383,12 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
      */
     @Pure
     @Override
-    public final boolean hasNext() {
+    public final boolean hasNext(@NotOwningCollection ArraySetIterator this) {
       return index < size();
     }
 
     @Override
-    public final E next() {
+    public final @NotOwning E next(@NotOwningCollection ArraySetIterator this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }

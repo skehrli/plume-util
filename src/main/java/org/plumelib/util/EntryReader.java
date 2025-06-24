@@ -18,12 +18,15 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
+import org.checkerframework.checker.collectionownership.qual.PolyOwningCollection;
 import org.checkerframework.checker.index.qual.GTENegativeOne;
 import org.checkerframework.checker.index.qual.IndexOrLow;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -545,7 +548,8 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @return the string that was read, or null at end of file
    */
   @Override
-  public @Nullable String readLine(@GuardSatisfied EntryReader this) throws IOException {
+  public @Nullable String readLine(@GuardSatisfied @NotOwningCollection EntryReader this)
+      throws IOException {
 
     // System.out.printf ("Entering size = %d%n", readers.size());
 
@@ -617,9 +621,15 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    *
    * @return a line-by-line iterator for this file
    */
-  @SuppressWarnings("mustcall:override.return")
+  @SuppressWarnings({
+    "mustcall:override.return",
+    "collectionownership:return" // Iterator<String> correctly defaults to bottom. Since the
+    // receiver is @OwningCollection, this reports an error. However,
+    // it is only meant as an upper bound.
+  })
   @Override
-  public @MustCallAlias Iterator<String> iterator(@MustCallAlias EntryReader this) {
+  public @MustCallAlias Iterator<String> iterator(
+      @MustCallAlias @PolyOwningCollection EntryReader this) {
     return this;
   }
 
@@ -634,7 +644,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
     "lock:method.guarantee.violated"
   }) // readLine might throw, has side effects
   @Override
-  public boolean hasNext(@GuardSatisfied EntryReader this) {
+  public boolean hasNext(@GuardSatisfied @NotOwningCollection EntryReader this) {
     if (pushbackLine != null) {
       return true;
     }
@@ -661,7 +671,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @throws NoSuchElementException at end of file
    */
   @Override
-  public String next(@GuardSatisfied EntryReader this) {
+  public @NotOwning String next(@GuardSatisfied @NotOwningCollection EntryReader this) {
     try {
       String result = readLine();
       if (result != null) {
@@ -779,7 +789,8 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @return next line from the reader, or null if there is no more input
    * @throws IOException if there is trouble with the reader
    */
-  private @Nullable String getNextLine(@GuardSatisfied EntryReader this) throws IOException {
+  private @Nullable String getNextLine(@GuardSatisfied @NotOwningCollection EntryReader this)
+      throws IOException {
 
     if (readers.size() == 0) {
       return null;
@@ -874,7 +885,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    */
   // TODO:  This would probably be better implemented with the "mark" mechanism
   // of BufferedReader (which is also in LineNumberReader and FlnReader).
-  public void putback(@GuardSatisfied EntryReader this, String line) {
+  public void putback(@GuardSatisfied @NotOwningCollection EntryReader this, String line) {
     if (pushbackLine != null) {
       throw new Error(
           "Cannot put back '" + line + "' because already put back '" + pushbackLine + "'");

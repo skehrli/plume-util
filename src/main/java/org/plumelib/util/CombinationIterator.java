@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
 import org.checkerframework.checker.index.qual.LengthOf;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
@@ -80,13 +82,13 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
 
   @Override
   @EnsuresNonNullIf(expression = "nextValue", result = true)
-  public boolean hasNext(@GuardSatisfied CombinationIterator<T> this) {
+  public boolean hasNext(@GuardSatisfied @NotOwningCollection CombinationIterator<T> this) {
     return nextValue != null;
   }
 
   /** Advance {@code #nextValue} to the next value, or to null if there are no more values. */
   @RequiresNonNull("nextValue")
-  private void advanceNext(@GuardSatisfied CombinationIterator<T> this) {
+  private void advanceNext(@GuardSatisfied @NotOwningCollection CombinationIterator<T> this) {
     List<T> nnNextValue = nextValue;
     for (int i = combinationSize - 1; i >= 0; i--) {
       if (iterators[i].hasNext()) {
@@ -101,7 +103,7 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
   }
 
   @Override
-  public List<T> next(@GuardSatisfied CombinationIterator<T> this) {
+  public @NotOwning List<T> next(@GuardSatisfied @NotOwningCollection CombinationIterator<T> this) {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }

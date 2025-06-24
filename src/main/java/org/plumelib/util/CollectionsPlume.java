@@ -27,10 +27,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
-import org.checkerframework.checker.index.qual.NonNegative; 
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.Positive;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.KeyForBottom;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -456,7 +457,8 @@ public final class CollectionsPlume {
   public static <
           @KeyForBottom FROM extends @Nullable @UnknownKeyFor Object,
           @KeyForBottom TO extends @Nullable @UnknownKeyFor Object>
-      List<TO> mapList(Function<? super FROM, ? extends TO> f, @NotOwningCollection Iterable<FROM> iterable) {
+      List<TO> mapList(
+          Function<? super FROM, ? extends TO> f, @NotOwningCollection Iterable<FROM> iterable) {
     List<TO> result;
 
     if (iterable instanceof RandomAccess) {
@@ -1218,6 +1220,8 @@ public final class CollectionsPlume {
       /** True if this Iterable object has been used. */
       private AtomicBoolean used = new AtomicBoolean();
 
+      @SuppressWarnings(
+          "collectionownership:override.receiver") // can't annotate receiver in anonymous classes
       @Override
       public Iterator<T> iterator() {
         if (used.getAndSet(true)) {
@@ -1251,13 +1255,13 @@ public final class CollectionsPlume {
 
     @SuppressWarnings("JdkObsolete")
     @Override
-    public boolean hasNext(@GuardSatisfied EnumerationIterator<T> this) {
+    public boolean hasNext(@GuardSatisfied @NotOwningCollection EnumerationIterator<T> this) {
       return e.hasMoreElements();
     }
 
     @SuppressWarnings("JdkObsolete")
     @Override
-    public T next(@GuardSatisfied EnumerationIterator<T> this) {
+    public @NotOwning T next(@GuardSatisfied @NotOwningCollection EnumerationIterator<T> this) {
       return e.nextElement();
     }
 
@@ -1324,12 +1328,12 @@ public final class CollectionsPlume {
     }
 
     @Override
-    public boolean hasNext(@GuardSatisfied MergedIterator2<T> this) {
+    public boolean hasNext(@GuardSatisfied @NotOwningCollection MergedIterator2<T> this) {
       return itor1.hasNext() || itor2.hasNext();
     }
 
     @Override
-    public T next(@GuardSatisfied MergedIterator2<T> this) {
+    public @NotOwning T next(@GuardSatisfied @NotOwningCollection MergedIterator2<T> this) {
       if (itor1.hasNext()) {
         return itor1.next();
       } else if (itor2.hasNext()) {
@@ -1373,7 +1377,7 @@ public final class CollectionsPlume {
 
     @SuppressWarnings({"allcheckers:purity", "lock:method.guarantee.violated"})
     @Override
-    public boolean hasNext(@GuardSatisfied MergedIterator<T> this) {
+    public boolean hasNext(@GuardSatisfied @NotOwningCollection MergedIterator<T> this) {
       while (!current.hasNext() && itorOfItors.hasNext()) {
         current = itorOfItors.next();
       }
@@ -1381,7 +1385,7 @@ public final class CollectionsPlume {
     }
 
     @Override
-    public T next(@GuardSatisfied MergedIterator<T> this) {
+    public @NotOwning T next(@GuardSatisfied @NotOwningCollection MergedIterator<T> this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
@@ -1435,7 +1439,7 @@ public final class CollectionsPlume {
       "lock:method.guarantee.violated"
     }) // benevolent side effects
     @Override
-    public boolean hasNext(@GuardSatisfied FilteredIterator<T> this) {
+    public boolean hasNext(@GuardSatisfied @NotOwningCollection FilteredIterator<T> this) {
       while (!currentValid && itor.hasNext()) {
         current = itor.next();
         currentValid = predicate.test(current);
@@ -1444,7 +1448,7 @@ public final class CollectionsPlume {
     }
 
     @Override
-    public T next(@GuardSatisfied FilteredIterator<T> this) {
+    public @NotOwning T next(@GuardSatisfied @NotOwningCollection FilteredIterator<T> this) {
       if (hasNext()) {
         currentValid = false;
         @SuppressWarnings("interning")
@@ -1501,12 +1505,14 @@ public final class CollectionsPlume {
     }
 
     @Override
-    public boolean hasNext(@GuardSatisfied RemoveFirstAndLastIterator<T> this) {
+    public boolean hasNext(
+        @GuardSatisfied @NotOwningCollection RemoveFirstAndLastIterator<T> this) {
       return itor.hasNext();
     }
 
     @Override
-    public T next(@GuardSatisfied RemoveFirstAndLastIterator<T> this) {
+    public @NotOwning T next(
+        @GuardSatisfied @NotOwningCollection RemoveFirstAndLastIterator<T> this) {
       if (!itor.hasNext()) {
         throw new NoSuchElementException();
       }

@@ -14,7 +14,6 @@ import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
@@ -352,7 +351,7 @@ public final class StringsPlume {
   @SideEffectFree
   public static String join(
       CharSequence delim,
-      @MustCallUnknown @NotOwningCollection Iterable<? extends @Signed @PolyNull @MustCallUnknown Object> v) {
+      @MustCallUnknown Iterable<? extends @Signed @PolyNull @MustCallUnknown Object> v) {
     StringBuilder sb = new StringBuilder();
     boolean first = true;
     Iterator<? extends @Signed @PolyNull @MustCallUnknown Object> itor = v.iterator();

@@ -5,8 +5,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
+import org.checkerframework.checker.collectionownership.qual.OwningCollection;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.KeyForBottom;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
@@ -79,7 +82,8 @@ public abstract class AbstractMostlySingletonSet<T extends @Signed Object> imple
   }
 
   @Override
-  public @NonNegative int size(@GuardSatisfied AbstractMostlySingletonSet<T> this) {
+  public @NonNegative int size(
+      @GuardSatisfied @NotOwningCollection AbstractMostlySingletonSet<T> this) {
     switch (state) {
       case EMPTY:
         return 0;
@@ -100,11 +104,12 @@ public abstract class AbstractMostlySingletonSet<T extends @Signed Object> imple
 
   @Override
   @SuppressWarnings({
+    "collectionownership:override.receiver",
     "allcheckers:purity.not.sideeffectfree",
     "lock:override.receiver" // cannot specify the anonymous receiver type
   })
   @SideEffectFree
-  public Iterator<T> iterator() {
+  public Iterator<T> iterator(@OwningCollection AbstractMostlySingletonSet<T> this) {
     switch (state) {
       case EMPTY:
         return Collections.emptyIterator();
@@ -119,7 +124,7 @@ public abstract class AbstractMostlySingletonSet<T extends @Signed Object> imple
           }
 
           @Override
-          public T next(/*@GuardedBy Iterator<T> this*/ ) {
+          public @NotOwning T next(/*@GuardedBy Iterator<T> this*/ ) {
             if (hasNext) {
               hasNext = false;
               assert value != null : "@AssumeAssertion(nullness): previous add is non-null";

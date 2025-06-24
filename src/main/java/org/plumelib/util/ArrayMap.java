@@ -17,6 +17,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
+import org.checkerframework.checker.collectionownership.qual.PolyOwningCollection;
 import org.checkerframework.checker.index.qual.GTENegativeOne;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
@@ -24,6 +26,7 @@ import org.checkerframework.checker.index.qual.LessThan;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.SameLen;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -300,7 +303,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
 
   @Pure
   @Override
-  public @NonNegative int size() {
+  public @NonNegative int size(@NotOwningCollection ArrayMap<K, V> this) {
     return size;
   }
 
@@ -463,7 +466,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
 
     @Pure
     @Override
-    public final @NonNegative int size() {
+    public final @NonNegative int size(@NotOwningCollection KeySet this) {
       return ArrayMap.this.size();
     }
 
@@ -473,7 +476,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
     }
 
     @Override
-    public final Iterator<@KeyFor("this") K> iterator() {
+    public final Iterator<@KeyFor("this") K> iterator(@PolyOwningCollection KeySet this) {
       return new KeyIterator();
     }
 
@@ -551,7 +554,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
 
     @Pure
     @Override
-    public final @NonNegative int size() {
+    public final @NonNegative int size(@NotOwningCollection Values this) {
       return ArrayMap.this.size();
     }
 
@@ -561,7 +564,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
     }
 
     @Override
-    public final Iterator<V> iterator() {
+    public final Iterator<V> iterator(@PolyOwningCollection Values this) {
       return new ValueIterator();
     }
 
@@ -632,7 +635,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
 
     @Pure
     @Override
-    public final @NonNegative int size() {
+    public final @NonNegative int size(@NotOwningCollection EntrySet this) {
       return ArrayMap.this.size();
     }
 
@@ -642,7 +645,8 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
     }
 
     @Override
-    public final Iterator<Map.Entry<@KeyFor("ArrayMap.this") K, V>> iterator() {
+    public final Iterator<Map.Entry<@KeyFor("ArrayMap.this") K, V>> iterator(
+        @PolyOwningCollection EntrySet this) {
       return new EntryIterator();
     }
 
@@ -716,7 +720,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
      * @return true if this has another element
      */
     @Pure
-    public final boolean hasNext() {
+    public final boolean hasNext(@NotOwningCollection ArrayMapIterator this) {
       return index < size();
     }
 
@@ -740,13 +744,14 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
   }
 
   /** An iterator over the keys. */
-  final class KeyIterator extends ArrayMapIterator implements Iterator<@KeyFor("this") K> {
+  final class KeyIterator extends @NotOwningCollection ArrayMapIterator
+      implements Iterator<@KeyFor("this") K> {
     /** Creates a new KeyIterator. */
     @SideEffectFree
     KeyIterator() {}
 
     @Override
-    public final @KeyFor("ArrayMap.this") K next() {
+    public final @NotOwning @KeyFor("ArrayMap.this") K next(@NotOwningCollection KeyIterator this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
@@ -762,7 +767,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
     ValueIterator() {}
 
     @Override
-    public final V next() {
+    public final @NotOwning V next(@NotOwningCollection ValueIterator this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
@@ -778,7 +783,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
     EntryIterator() {}
 
     @Override
-    public final Map.Entry<K, V> next() {
+    public final @NotOwning Map.Entry<K, V> next(@NotOwningCollection EntryIterator this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }

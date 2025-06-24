@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.checkerframework.checker.collectionownership.qual.NotOwningCollection;
 import org.checkerframework.checker.index.qual.IndexFor;
 import org.checkerframework.checker.index.qual.LessThan;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.PolyUpperBound;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Unsigned;
@@ -1406,7 +1408,7 @@ public final class MathPlume {
       "lock:method.guarantee.violated"
     })
     @Override
-    public boolean hasNext(@GuardSatisfied MissingNumbersIteratorInt this) {
+    public boolean hasNext(@GuardSatisfied @NotOwningCollection MissingNumbersIteratorInt this) {
       if (currentMissing < currentNonmissing) {
         return true;
       }
@@ -1461,7 +1463,8 @@ public final class MathPlume {
     }
 
     @Override
-    public Integer next(@GuardSatisfied MissingNumbersIteratorInt this) {
+    public @NotOwning Integer next(
+        @GuardSatisfied @NotOwningCollection MissingNumbersIteratorInt this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
@@ -1744,7 +1747,7 @@ public final class MathPlume {
       "lock:method.guarantee.violated"
     })
     @Override
-    public boolean hasNext(@GuardSatisfied MissingNumbersIteratorLong this) {
+    public boolean hasNext(@GuardSatisfied @NotOwningCollection MissingNumbersIteratorLong this) {
       if (currentMissing < currentNonmissing) {
         return true;
       }
@@ -1799,7 +1802,8 @@ public final class MathPlume {
     }
 
     @Override
-    public Long next(@GuardSatisfied MissingNumbersIteratorLong this) {
+    public @NotOwning Long next(
+        @GuardSatisfied @NotOwningCollection MissingNumbersIteratorLong this) {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
