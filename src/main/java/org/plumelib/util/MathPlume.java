@@ -922,7 +922,7 @@ public final class MathPlume {
    * input, or they can merely be checked for the condition without the strict density requirement.
    *
    * @param nums array of operands
-   * @param nonstrictEnds whether endpoints are NOT subject to the strict density requirement
+   * @param nonstrictEnds true if endpoints are NOT subject to the strict density requirement
    * @return an array of two integers (r,m) such that each number in NUMS is equal to r (mod m), or
    *     null if no such exists or the array contains fewer than 3 elements
    */
@@ -977,7 +977,7 @@ public final class MathPlume {
    * <p>For documentation, see {@link #modulusStrict(int[], boolean)}.
    *
    * @param itor iterator of operands; modified by this method
-   * @param nonstrictEnds whether endpoints are NOT subject to the strict density requirement
+   * @param nonstrictEnds true if endpoints are NOT subject to the strict density requirement
    * @return an array of two integers (r,m) such that each number in NUMS is equal to r (mod m), or
    *     null if no such exists or the iterator contains fewer than 3 elements
    * @see #modulusStrict(int[], boolean)
@@ -1166,7 +1166,7 @@ public final class MathPlume {
    * input, or they can merely be checked for the condition without the strict density requirement.
    *
    * @param nums array of operands
-   * @param nonstrictEnds whether endpoints are NOT subject to the strict density requirement
+   * @param nonstrictEnds true if endpoints are NOT subject to the strict density requirement
    * @return an array of two integers (r,m) such that each number in NUMS is equal to r (mod m), or
    *     null if no such exists or the array contains fewer than 3 elements
    */
@@ -1221,7 +1221,7 @@ public final class MathPlume {
    * <p>For documentation, see {@link #modulusStrict(long[], boolean)}.
    *
    * @param itor iterator of operands; modified by this method
-   * @param nonstrictEnds whether endpoints are NOT subject to the strict density requirement
+   * @param nonstrictEnds true if endpoints are NOT subject to the strict density requirement
    * @return an array of two integers (r,m) such that each number in NUMS is equal to r (mod m), or
    *     null if no such exists or the iterator contains fewer than 3 elements
    * @see #modulusStrict(int[], boolean)
@@ -1510,6 +1510,7 @@ public final class MathPlume {
    * @return value to be returned by {@link #nonmodulusStrict(int[])}: a tuple of (r,m) where all
    *     numbers in {@code missing} are equal to r (mod m)
    */
+  @SuppressWarnings("deprecation") // to be made package-private
   private static int @Nullable @ArrayLen(2) [] nonmodulusStrictIntInternal(
       Iterator<Integer> missing) {
     // Must not use regular modulus:  that can produce errors, eg
@@ -1529,13 +1530,14 @@ public final class MathPlume {
   }
 
   /**
-   * Return true if the first and last elements are not equal to r (mod m).
+   * Returns true if the first and last elements are not equal to r (mod m).
    *
    * @param rm a tuple of (r,m)
    * @param rfali a sequence of numbers, plus a first and last element outside their range. This
    *     iterator has already been iterated all the way to its end.
    * @return true if the first and last elements are not equal to r (mod m)
    */
+  @SuppressWarnings("deprecation") // to be made package-private
   private static boolean checkFirstAndLastNonmodulus(
       int @ArrayLen(2) [] rm, CollectionsPlume.RemoveFirstAndLastIterator<Integer> rfali) {
     int r = rm[0];
@@ -1848,13 +1850,14 @@ public final class MathPlume {
    * @param missing the missing integers; modified by this method
    * @return value to be returned by {@link #nonmodulusStrict(long[])}
    */
+  @SuppressWarnings("deprecation") // to be made package-private
   private static long @Nullable @ArrayLen(2) [] nonmodulusStrictLongInternal(
       Iterator<Long> missing) {
     // Must not use regular modulus:  that can produce errors, eg
     // nonmodulusStrict({1,2,3,5,6,7,9,11}) => {0,2}.  Thus, use
     // modulusStrict.
     CollectionsPlume.RemoveFirstAndLastIterator<Long> missingNums =
-        new CollectionsPlume.RemoveFirstAndLastIterator<Long>(missing);
+        new CollectionsPlume.RemoveFirstAndLastIterator<>(missing);
     long[] result = modulusStrictLong(missingNums, false);
     if (result == null) {
       return result;
@@ -1867,13 +1870,14 @@ public final class MathPlume {
   }
 
   /**
-   * Return true if the first and last elements are equal to r (mod m).
+   * Returns true if the first and last elements are equal to r (mod m).
    *
    * @param rm an array containing two elements
    * @param rfali a sequence of numbers, plus a first and last element outside their range. This
    *     iterator has already been iterated all the way to its end.
    * @return true if the first and last elements are equal to r (mod m)
    */
+  @SuppressWarnings("deprecation") // to be made package-private
   @Pure
   private static boolean checkFirstAndLastNonmodulus(
       long @ArrayLen(2) [] rm, CollectionsPlume.RemoveFirstAndLastIterator<Long> rfali) {
