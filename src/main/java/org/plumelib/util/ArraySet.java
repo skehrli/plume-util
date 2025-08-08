@@ -287,7 +287,7 @@ public class ArraySet<E extends @UnknownSignedness Object> extends AbstractSet<E
    */
   @Pure
   private int indexOf(
-      @OwningCollection ArraySet<E> this,
+      @NotOwningCollection ArraySet<E> this,
       @GuardSatisfied @Nullable @UnknownSignedness Object value) {
     if (values == null) {
       return -1;

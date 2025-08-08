@@ -321,7 +321,9 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
    * @return the index of the given key, or -1 if it does not appear
    */
   @Pure
-  private int indexOfKey(@GuardSatisfied @Nullable @UnknownSignedness Object key) {
+  private int indexOfKey(
+      @NotOwningCollection ArrayMap<K, V> this,
+      @GuardSatisfied @Nullable @UnknownSignedness Object key) {
     if (keys == null) {
       return -1;
     }
@@ -341,7 +343,9 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
    * @return the index of the given value, or -1 if it does not appear
    */
   @Pure
-  private int indexOfValue(@GuardSatisfied @Nullable @UnknownSignedness Object value) {
+  private int indexOfValue(
+      @NotOwningCollection ArrayMap<K, V> this,
+      @GuardSatisfied @Nullable @UnknownSignedness Object value) {
     if (keys == null) {
       return -1;
     }
@@ -383,7 +387,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
 
   @Pure
   @Override
-  public @Nullable V get(@GuardSatisfied @Nullable @UnknownSignedness Object key) {
+  public @NotOwning @Nullable V get(@GuardSatisfied @Nullable @UnknownSignedness Object key) {
     int index = indexOfKey(key);
     return getOrNull(index);
   }
@@ -395,14 +399,15 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
    * @return the value at the given index, or null if the index is -1
    */
   @Pure
-  private @Nullable V getOrNull(@GTENegativeOne int index) {
+  private @Nullable V getOrNull(
+      @NotOwningCollection ArrayMap<K, V> this, @GTENegativeOne int index) {
     return (index == -1) ? null : values[index];
   }
 
   // Modification Operations
 
   @Override
-  public @Nullable V put(K key, V value) {
+  public @NotOwning @Nullable V put(K key, V value) {
     int index = indexOfKey(key);
     V currentValue = getOrNull(index);
     put(index, key, value);
@@ -830,7 +835,7 @@ public class ArrayMap<K extends @UnknownSignedness Object, V extends @UnknownSig
 
     @Pure
     @Override
-    public V getValue() {
+    public @NotOwning V getValue() {
       return values[index];
     }
 
