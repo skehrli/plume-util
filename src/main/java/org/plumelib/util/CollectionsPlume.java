@@ -1349,7 +1349,7 @@ public final class CollectionsPlume {
     }
 
     @Override
-    public T next(@GuardSatisfied IteratorPlusOne<T> this) {
+    public @NotOwning T next(@GuardSatisfied IteratorPlusOne<T> this) {
       if (itor.hasNext()) {
         return itor.next();
       } else if (hasPlusOne) {

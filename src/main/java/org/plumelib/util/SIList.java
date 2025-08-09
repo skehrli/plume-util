@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.collectionownership.qual.PolyOwningCollection;
 import org.checkerframework.checker.index.qual.IndexFor;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LengthOf;
 import org.checkerframework.checker.index.qual.SameLen;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.ArrayLen;
@@ -315,7 +317,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator(@PolyOwningCollection SimpleEmptyList<E> this) {
       return Collections.emptyIterator();
     }
   }
@@ -370,7 +372,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator(@PolyOwningCollection SingletonList<E> this) {
       return Collections.singleton(element).iterator();
     }
   }
@@ -431,7 +433,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator(@PolyOwningCollection OneMoreElementList<E> this) {
       return CollectionsPlume.iteratorPlusOne(list.iterator(), lastElement);
     }
 
@@ -489,7 +491,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator(@PolyOwningCollection SimpleArrayList<E> this) {
       return delegate.iterator();
     }
 
@@ -589,7 +591,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator(@PolyOwningCollection ListOfLists<E> this) {
       List<Iterator<E>> itors = CollectionsPlume.mapList(SIList::iterator, lists);
       return CollectionsPlume.mergedIterator(itors.iterator());
     }
@@ -652,7 +654,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<E> iterator(@PolyOwningCollection SimpleSubList<E> this) {
       return new SimpleSubListIterator();
     }
 
@@ -676,7 +678,7 @@ public abstract class SIList<E> implements Iterable<E>, Serializable {
       }
 
       @Override
-      public E next(@GuardSatisfied SimpleSubListIterator this) {
+      public @NotOwning E next(@GuardSatisfied SimpleSubListIterator this) {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
